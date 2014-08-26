@@ -8,6 +8,14 @@ public class BuildManager : MonoBehaviour {
 	private TileMaps _tileMaps;
 	private GameObject _hover;
 
+	private bool _drag = false;
+
+	public GameObject temp;
+	private Item item;
+
+	//Mathf.RoundToInt( (calcPoint.y / 10 ) * 10 + (calcPoint.x * 10)), new Vector3(calcPoint.x, 0f, calcPoint.y)
+
+
 	void Awake()
 	{
 		_tileMaps = GetComponent<TileMaps> ();
@@ -16,37 +24,52 @@ public class BuildManager : MonoBehaviour {
 
 	// Update is called once per frame
 	void Update () {
+
+		if (!_drag)
+			return;
+
 		RaycastHit hit;
 		Ray ray = Camera.main.ScreenPointToRay (Input.mousePosition);
 
 		if (Physics.Raycast (ray, out hit, 1000)) 
 		{
 			Vector3 calcPoint = getTilePoints(hit.point);
-			_hover.transform.localPosition = new Vector3(calcPoint.x, 0f, calcPoint.y);
 
-			if(Input.GetMouseButtonDown(0))
-			{
-				//from bottom right corner 0
-				Build ( Mathf.RoundToInt( (calcPoint.y / 10 ) * 10 + (calcPoint.x * 10)), new Vector3(calcPoint.x, 0f, calcPoint.y));
-			}
-
-			if(Input.GetMouseButtonDown(1))
-			{
-				_tileMaps.RemoveObject(Mathf.RoundToInt( (calcPoint.y / 10 ) * 10 + (calcPoint.x * 10)));
-			}
+			temp.transform.localPosition = new Vector3(calcPoint.x, 0f, calcPoint.y);
+			CheckAllTilePositions(hit.point);
 		}
 	}
 
-	void Build(int index, Vector3 pos)
+	public void StartBuild()
 	{
-		GameObject temp = (GameObject)Instantiate (Obj, pos, Quaternion.identity);
-
-		if (_tileMaps.CheckPosition (temp, index) == false) 
-		{
-			Destroy(temp);
-		}
-
+		temp = (GameObject)Instantiate (Obj, Input.mousePosition, Quaternion.identity);
+		item = (Item)temp.GetComponent<Item> ();
+		_drag = true;
 	}
+
+	void CheckAllTilePositions(Vector3 centerPoint)
+	{
+		Vector3 rightEdge = new Vector3 (centerPoint.x + 1, centerPoint.y, centerPoint.z);
+
+		Vector3 leftEdge = new Vector3 (centerPoint.x - 1, centerPoint.y, centerPoint.z);
+
+		Vector3 topEdge = new Vector3 (centerPoint.x, centerPoint.y, centerPoint.z + 1);
+
+		Vector3 bottomEdge = new Vector3 (centerPoint.x, centerPoint.y, centerPoint.z - 1);
+
+
+		// the size of the grid here
+		if (rightEdge.x > 10 || leftEdge.x < 0 || topEdge.z > 10 || bottomEdge.z < 0) 
+		{
+			item.HightLight.renderer.material.SetColor ("_Color", Color.red);
+		} 
+		else 
+		{			
+			item.HightLight.renderer.material.SetColor ("_Color", Color.green);
+		}
+		   
+	}
+
 
 	// Convert world space floor points to tile points
 	Vector2 getTilePoints(Vector3 floorPoints)

@@ -1,10 +1,10 @@
 ﻿<Properties>
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="MonoDevelop.Default" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Scripts/HoverScript.cs">
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Scripts/BuildManager.cs">
     <Files>
-      <File FileName="Assets/Scripts/Item.cs" Line="12" Column="1" />
+      <File FileName="Assets/Scripts/Item.cs" Line="1" Column="1" />
       <File FileName="Assets/Scripts/Fire.cs" Line="8" Column="1" />
-      <File FileName="Assets/Scripts/HoverScript.cs" Line="4" Column="41" />
+      <File FileName="Assets/Scripts/BuildManager.cs" Line="52" Column="85" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

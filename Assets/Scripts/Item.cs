@@ -18,4 +18,5 @@ public class Item : MonoBehaviour  {
 	public string ItemName;
 	public string ItemDesc;
 	public Direction direction = Direction.None;
+	public GameObject HightLight;
 }
