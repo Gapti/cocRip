@@ -39,7 +39,15 @@ public class BuildManager : MonoBehaviour {
 			Vector3 calcPoint = getTilePoints(hit.point);
 
 			temp.transform.localPosition = new Vector3(calcPoint.x, 0f, calcPoint.y);
-			CheckAllTilePositions(hit.point);
+
+			if(Input.GetMouseButtonDown(0))
+			{
+				Vector2 leftTop = new Vector3 (calcPoint.x - 1, calcPoint.z + 1);
+
+				UpdateDatabase(leftTop);
+				_drag = false;
+				temp = null;
+			}
 		}
 	}
 
@@ -73,16 +81,21 @@ public class BuildManager : MonoBehaviour {
 		   
 	}
 
+	public void UpdateDatabase(Vector2 topLeft)
+	{
+
+	}
+
 
 	// Convert world space floor points to tile points
 	Vector2 getTilePoints(Vector3 floorPoints)
 	{
 		Vector2 tilePoints = new Vector2();
 		// Convert the space points to tile points
-		tilePoints.x = (int)(floorPoints.x / 1f);
-		tilePoints.y = (int)(floorPoints.z / 1f);
+		tilePoints.x = (int)(floorPoints.x);
+		tilePoints.y = (int)(floorPoints.z);
 
-		print ("y " + tilePoints.y + " x " + tilePoints.x); 
+		//print ("y " + tilePoints.y + " x " + tilePoints.x); 
 
 		// Return the tile points
 		return tilePoints;
