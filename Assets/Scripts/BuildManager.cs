@@ -13,6 +13,9 @@ public class BuildManager : MonoBehaviour {
 	public GameObject temp;
 	private Item item;
 
+	public int MapWidth = 50;
+	public int MapHeight = 50;
+
 	//Mathf.RoundToInt( (calcPoint.y / 10 ) * 10 + (calcPoint.x * 10)), new Vector3(calcPoint.x, 0f, calcPoint.y)
 
 
@@ -59,7 +62,7 @@ public class BuildManager : MonoBehaviour {
 
 
 		// the size of the grid here
-		if (rightEdge.x > 10 || leftEdge.x < 0 || topEdge.z > 10 || bottomEdge.z < 0) 
+		if (rightEdge.x > MapWidth || leftEdge.x < 0 || topEdge.z > MapHeight || bottomEdge.z < 0) 
 		{
 			item.HightLight.renderer.material.SetColor ("_Color", Color.red);
 		} 
@@ -78,6 +81,8 @@ public class BuildManager : MonoBehaviour {
 		// Convert the space points to tile points
 		tilePoints.x = (int)(floorPoints.x / 1f);
 		tilePoints.y = (int)(floorPoints.z / 1f);
+
+		print ("y " + tilePoints.y + " x " + tilePoints.x); 
 
 		// Return the tile points
 		return tilePoints;
