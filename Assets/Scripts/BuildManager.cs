@@ -1,6 +1,12 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+public enum Mode
+{
+	Move,
+	Build
+}
+
 public class BuildManager : MonoBehaviour {
 	
 	public GameObject Obj;
@@ -8,13 +14,13 @@ public class BuildManager : MonoBehaviour {
 	private TileMaps _tileMaps;
 	private GameObject _hover;
 
-	private bool _drag = false;
-
 	public GameObject temp;
 	private Item item;
 
 	public int MapWidth = 50;
 	public int MapHeight = 50;
+
+	public Mode ModeType = Mode.Move;
 
 	//Mathf.RoundToInt( (calcPoint.y / 10 ) * 10 + (calcPoint.x * 10)), new Vector3(calcPoint.x, 0f, calcPoint.y)
 
@@ -28,9 +34,6 @@ public class BuildManager : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 
-		if (!_drag)
-			return;
-
 		RaycastHit hit;
 		Ray ray = Camera.main.ScreenPointToRay (Input.mousePosition);
 
@@ -38,48 +41,51 @@ public class BuildManager : MonoBehaviour {
 		{
 			Vector3 calcPoint = getTilePoints(hit.point);
 
+			if(ModeType == Mode.Build || ModeType == Mode.Move && temp != null)
 			temp.transform.localPosition = new Vector3(calcPoint.x, 0f, calcPoint.y);
 
-			if(Input.GetMouseButtonDown(0))
+			///place the item
+			if(Input.GetMouseButtonDown(0) && ModeType == Mode.Build)
 			{
+				if(!item.CanPLace)
+					return;
+
 				Vector2 leftTop = new Vector3 (calcPoint.x - 1, calcPoint.z + 1);
 
+				item.IsPlaced = true;
+
 				UpdateDatabase(leftTop);
-				_drag = false;
+
+				ModeType = Mode.Move;
 				temp = null;
+			}
+			else if(Input.GetMouseButtonDown(0) && ModeType == Mode.Move) // move the item
+			{
+				Item ItemHit = hit.transform.GetComponent<Item>();
+
+				if(ItemHit != null)
+				{
+					temp = hit.transform.gameObject;
+					item = (Item)temp.GetComponent<Item> ();
+					item.IsPlaced = false;
+					ModeType = Mode.Build;
+
+				}
 			}
 		}
 	}
-
+	
 	public void StartBuild()
 	{
+		if (ModeType == Mode.Build)
+		return;
+
+		ModeType = Mode.Build;
+
 		temp = (GameObject)Instantiate (Obj, Input.mousePosition, Quaternion.identity);
 		item = (Item)temp.GetComponent<Item> ();
-		_drag = true;
 	}
-
-	void CheckAllTilePositions(Vector3 centerPoint)
-	{
-		Vector3 rightEdge = new Vector3 (centerPoint.x + 1, centerPoint.y, centerPoint.z);
-
-		Vector3 leftEdge = new Vector3 (centerPoint.x - 1, centerPoint.y, centerPoint.z);
-
-		Vector3 topEdge = new Vector3 (centerPoint.x, centerPoint.y, centerPoint.z + 1);
-
-		Vector3 bottomEdge = new Vector3 (centerPoint.x, centerPoint.y, centerPoint.z - 1);
-
-
-		// the size of the grid here
-		if (rightEdge.x > MapWidth || leftEdge.x < 0 || topEdge.z > MapHeight || bottomEdge.z < 0) 
-		{
-			item.HightLight.renderer.material.SetColor ("_Color", Color.red);
-		} 
-		else 
-		{			
-			item.HightLight.renderer.material.SetColor ("_Color", Color.green);
-		}
-		   
-	}
+	
 
 	public void UpdateDatabase(Vector2 topLeft)
 	{
